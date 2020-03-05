@@ -1,0 +1,24 @@
+git / qemu should be installed before start
+Run xv6
+- make qemu-nox
+Terminate
+ctrl+'a' -> 'x'
+
+Ctags & Cscope help to diagnose the OS
+
+Ctags 
+1.sudo apt-get install ctags
+2.ctags -R
+3.vi ~/.vimrc
+4.in that file, write [set tags=#PATH/xv6-sse-local/tags]
+	for me, #PATH:/home/hyun
+usage - 
+	- ctrl + ] : follow tag
+	- ctrl + T : back to last tag
+Cscope
+1.sudo apt-get install cscope
+2.cscope -R
+3. ctrl+D
+4.vi ~/.vimrc
+5.in that file, write [set cst
+			cs add #PATH/xv6-sse-local/cscope.out #PATH/xv6-sse-local
