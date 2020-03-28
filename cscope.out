@@ -1,4 +1,4 @@
-cscope 15 $HOME/xv6-sse-local               0000235637
+cscope 15 $HOME/OS-3-1               0000235763
 	@asm.h
 
 5 
@@ -8543,42 +8543,54 @@ O_RDWR
 (1, "init: starting sh\n");
 
 24 
+	`¥ötf
+(1,"Student ID: 2016310932\n");
+
+25 
+	`¥ötf
+(1,"Name: HyunWoong Bae\n");
+
+26 
+	`¥ötf
+(1,"========Any Message=======\n");
+
+27 
 pid
  = 
 	`f‹k
 ();
 
-25 if(
+28 if(
 pid
  < 0){
 
-26 
+29 
 	`¥ötf
 (1, "init: fork failed\n");
 
-27 
+30 
 	`exô
 ();
 
-29 if(
+32 if(
 pid
  == 0){
 
-30 
+33 
 	`exec
 ("sh", 
 ¨gv
 );
 
-31 
+34 
 	`¥ötf
 (1, "init:Éxec sh failed\n");
 
-32 
+35 
 	`exô
 ();
 
-34 (
+37 (
 wpid
 =
 	`waô
@@ -8586,11 +8598,11 @@ wpid
 pid
 )
 
-35 
+38 
 	`¥ötf
 (1, "zombie!\n");
 
-37 
+40 
 	}
 }
 
