@@ -20,11 +20,7 @@ extern void trapret(void);
 
 static void wakeup1(void *chan);
 
-void
-pinit(void)
-{
-  initlock(&ptable.lock, "ptable");
-}
+//}
 
 // Must be called with interrupts disabled
 int
@@ -88,7 +84,8 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
-
+  //p->priority = setnice();
+  p->priority = 5;
   release(&ptable.lock);
 
   // Allocate kernel stack.
@@ -200,7 +197,7 @@ fork(void)
   np->sz = curproc->sz;
   np->parent = curproc;
   *np->tf = *curproc->tf;
-
+  np->priority = curproc->priority;
   // Clear %eax so that fork returns 0 in the child.
   np->tf->eax = 0;
 
@@ -533,3 +530,45 @@ procdump(void)
     cprintf("\n");
   }
 }
+// own syscall
+
+int 
+ps(void)
+{
+	struct proc *p;
+	sti(); // enable interrupts
+
+	//lookup
+	acquire(&ptable.lock);
+	cprintf("ticks : %d\nname \t nice \t pid \t state \t \n",ticks);
+	for(p =ptable.proc; p< &ptable.proc[NPROC]; p++){
+		if(p->state == SLEEPING) cprintf("%s \t %d  \t %d  \t SLEEPING \t \n",p->name,p->priority,p->pid);
+		else if(p->state == RUNNING) cprintf("%s \t %d  \t %d  \t RUNNING \t \n",p->name,p->priority,p->pid);
+		else if(p->state == RUNNABLE) cprintf("%s \t %d  \t %d  \t RUNNABLE \t \n",p->name,p->priority,p->pid);
+	}
+	release(&ptable.lock);
+	//yield();
+	return 24;
+}
+
+int 
+setnice(int pid,int nice_val)
+{
+	if(myproc()->pid == pid){
+		myproc()->priority = nice_val;
+		if(myproc()->priority == nice_val) return 0;
+	} 
+	return -1; // fail
+}
+int 
+getnice(int pid)
+{
+	int val;
+	if(myproc()->pid == pid){
+		val = myproc()->priority;
+		if(val <0 || val>10) return -1;
+		else return val;	
+	}	
+	return -1;
+}
+

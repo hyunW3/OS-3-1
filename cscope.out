@@ -1,4 +1,4 @@
-cscope 15 $HOME/OS-3-1               0000235763
+cscope 15 $HOME/OS-3-1               0000237272
 	@asm.h
 
 5 
@@ -2687,195 +2687,213 @@ n‹ëu∫
 	`yõld
 ();
 
-125 
+123 
+	`ps
+();
+
+124 
+	`£äi˚
+(
+pid
+, 
+ni˚_vÆ
+);
+
+125 
+	`gëni˚
+(
+pid
+);
+
+127 
 	`swtch
 (
 c⁄ãxt
 **, context*);
 
-128 
+130 
 	`acquúe
 (
 •ölock
 *);
 
-129 
+131 
 	`gëˇŒîpcs
 (*, 
 uöt
 *);
 
-130 
+132 
 	`hﬁdög
 (
 •ölock
 *);
 
-131 
+133 
 	`öôlock
 (
 •ölock
 *, *);
 
-132 
+134 
 	`ªÀa£
 (
 •ölock
 *);
 
-133 
+135 
 	`push˛i
 ();
 
-134 
+136 
 	`p›˛i
 ();
 
-137 
+139 
 	`acquúe¶ìp
 (
 ¶ì∂ock
 *);
 
-138 
+140 
 	`ªÀa£¶ìp
 (
 ¶ì∂ock
 *);
 
-139 
+141 
 	`hﬁdög¶ìp
 (
 ¶ì∂ock
 *);
 
-140 
+142 
 	`öô¶ì∂ock
 (
 ¶ì∂ock
 *, *);
 
-143 
+145 
 	`memcmp
 (c⁄° *, c⁄° *, 
 uöt
 );
 
-144 * 
+146 * 
 	`memmove
 (*, c⁄° *, 
 uöt
 );
 
-145 * 
+147 * 
 	`mem£t
 (*, , 
 uöt
 );
 
-146 * 
+148 * 
 	`ß„°r˝y
 (*, const *, );
 
-147 
+149 
 	`°æí
 (const *);
 
-148 
+150 
 	`°∫cmp
 (c⁄° *, c⁄° *, 
 uöt
 );
 
-149 * 
+151 * 
 	`°∫˝y
 (*, const *, );
 
-152 
+154 
 	`¨göt
 (, *);
 
-153 
+155 
 	`¨g±r
 (, **, );
 
-154 
+156 
 	`¨g°r
 (, **);
 
-155 
+157 
 	`„tchöt
 (
 uöt
 , *);
 
-156 
+158 
 	`„tch°r
 (
 uöt
 , **);
 
-157 
+159 
 	`sysˇŒ
 ();
 
-160 
+162 
 	`timîöô
 ();
 
-163 
+165 
 	`idtöô
 ();
 
-164 
+166 
 uöt
  
 ticks
 ;
 
-165 
+167 
 	`tvöô
 ();
 
-166 
+168 
 •ölock
  
 tick¶ock
 ;
 
-169 
+171 
 	`u¨töô
 ();
 
-170 
+172 
 	`u¨töå
 ();
 
-171 
+173 
 	`u¨çutc
 ();
 
-174 
+176 
 	`£göô
 ();
 
-175 
+177 
 	`kvmÆloc
 ();
 
-176 
+178 
 pde_t
 * 
 	`£tupkvm
 ();
 
-177 * 
+179 * 
 	`uva2ka
 (
 pde_t
 *, *);
 
-178 
+180 
 	`Ælocuvm
 (
 pde_t
@@ -2883,7 +2901,7 @@ pde_t
 uöt
 , uint);
 
-179 
+181 
 	`dóŒocuvm
 (
 pde_t
@@ -2891,13 +2909,13 @@ pde_t
 uöt
 , uint);
 
-180 
+182 
 	`‰ìvm
 (
 pde_t
 *);
 
-181 
+183 
 	`öôuvm
 (
 pde_t
@@ -2905,7 +2923,7 @@ pde_t
 uöt
 );
 
-182 
+184 
 	`lﬂduvm
 (
 pde_t
@@ -2915,7 +2933,7 @@ pde_t
 uöt
 , uint);
 
-183 
+185 
 pde_t
 * 
 	`c›yuvm
@@ -2923,17 +2941,17 @@ pde_t
 uöt
 );
 
-184 
+186 
 	`swôchuvm
 (
 ¥oc
 *);
 
-185 
+187 
 	`swôchkvm
 ();
 
-186 
+188 
 	`c›yout
 (
 pde_t
@@ -2941,7 +2959,7 @@ pde_t
 uöt
 , *, uint);
 
-187 
+189 
 	`˛óΩãu
 (
 pde_t
@@ -2951,7 +2969,7 @@ pgdú
 uva
 );
 
-190 
+192 
 	`sw≠ªad
 (* 
 ±r
@@ -2959,7 +2977,7 @@ uva
 blkno
 );
 
-191 
+193 
 	`sw≠wrôe
 (* 
 ±r
@@ -2967,7 +2985,7 @@ blkno
 blkno
 );
 
-194 
+196 
 	#NELEM
 (
 x
@@ -18480,6 +18498,104 @@ i
 	}
 }
 
+539 
+	$ps
+()
+
+541 
+¥oc
+ *
+p
+;
+
+542 
+	`°i
+();
+
+545 
+	`acquúe
+(&
+±abÀ
+.
+lock
+);
+
+546 
+	`˝rötf
+("tick†: %d\¬amê\àni˚ \àpid \à°©ê\à\n",
+ticks
+);
+
+547 
+p
+ =
+±abÀ
+.
+¥oc
+;Ö< &±abÀ.¥oc[
+NPROC
+];Ö++){
+
+548 if(
+p
+->
+°©e
+ =
+SLEEPING
+Ë
+	`˝rötf
+("%†\à%d \à%d \àSLEEPING \à\n",p->
+«me
+,p-
+¥i‹ôy
+,p->
+pid
+);
+
+549 if(
+p
+->
+°©e
+ =
+RUNNING
+Ë
+	`˝rötf
+("%†\à%d \à%d \àRUNNING \à\n",p->
+«me
+,,p-
+¥i‹ôyp
+->
+pid
+);
+
+550 if(
+p
+->
+°©e
+ =
+RUNNABLE
+Ë
+	`˝rötf
+("%†\à%d \à%d \àRUNNABLE \à\n",p->
+«me
+,p-
+¥i‹ôy
+,p->
+pid
+);
+
+552 
+	`ªÀa£
+(&
+±abÀ
+.
+lock
+);
+
+555 
+	}
+}
+
 	@proc.h
 
 2 
@@ -18667,6 +18783,48 @@ NOFILE
 51 
 	m«me
 [16];
+
+53 
+	m¥i‹ôy
+;
+
+	@ps.c
+
+1 
+	~"ty≥s.h
+"
+
+2 
+	~"°©.h
+"
+
+3 
+	~"u£r.h
+"
+
+4 
+	~"f˙é.h
+"
+
+6 
+	$maö
+(
+¨gc
+, *
+¨gv
+[]){
+
+7 
+	`ps
+();
+
+8 
+	`exô
+();
+
+9 
+	}
+}
 
 	@rm.c
 
@@ -20946,6 +21104,98 @@ uöt
 	mpid
 ;
 
+	@something/t1.c
+
+2 
+	$ps
+()
+
+4 
+¥oc
+ *
+p
+;
+
+5 
+	`°i
+();
+
+8 
+	`aquúe
+(&
+±abÀ
+.
+lock
+);
+
+9 
+	`˝rötf
+("name \tÖid \t state \t \n");
+
+10 
+p
+ =
+±abÀ
+.
+¥oc
+;Ö< &±abÀ.¥oc[
+NPROC
+];Ö++){
+
+11 if(
+p
+->
+°©e
+ =
+SLEEPING
+Ë
+	`˝rötf
+("%†\à%d \àSLEEPING \à\n",p->
+«me
+,p->
+pid
+);
+
+12 if(
+p
+->
+°©e
+ =
+RUNNING
+Ë
+	`˝rötf
+("%†\à%d \àRUNNING \à\n",p->
+«me
+,p->
+pid
+);
+
+13 if(
+p
+->
+°©e
+ =
+RUNNALBE
+Ë
+	`˝rötf
+("%†\à%d \àRUNNABLE \à\n",p->
+«me
+,p->
+pid
+);
+
+15 
+	`ªÀa£
+(&
+±abÀ
+.
+lock
+);
+
+18 
+	}
+}
+
 	@spinlock.c
 
 3 
@@ -22386,161 +22636,171 @@ sys_sw≠ªad
 sys_sw≠wrôe
 ();
 
-109 (*
+108 
+sys_ps
+();
+
+110 (*
 sysˇŒs
 [])() = {
 
-110 [
+111 [
 SYS_f‹k
 ] 
 sys_f‹k
 ,
 
-111 [
+112 [
 SYS_exô
 ] 
 sys_exô
 ,
 
-112 [
+113 [
 SYS_waô
 ] 
 sys_waô
 ,
 
-113 [
+114 [
 SYS_pùe
 ] 
 sys_pùe
 ,
 
-114 [
+115 [
 SYS_ªad
 ] 
 sys_ªad
 ,
 
-115 [
+116 [
 SYS_kûl
 ] 
 sys_kûl
 ,
 
-116 [
+117 [
 SYS_exec
 ] 
 sys_exec
 ,
 
-117 [
+118 [
 SYS_f°©
 ] 
 sys_f°©
 ,
 
-118 [
+119 [
 SYS_chdú
 ] 
 sys_chdú
 ,
 
-119 [
+120 [
 SYS_dup
 ] 
 sys_dup
 ,
 
-120 [
+121 [
 SYS_gëpid
 ] 
 sys_gëpid
 ,
 
-121 [
+122 [
 SYS_sbrk
 ] 
 sys_sbrk
 ,
 
-122 [
+123 [
 SYS_¶ìp
 ] 
 sys_¶ìp
 ,
 
-123 [
+124 [
 SYS_u±ime
 ] 
 sys_u±ime
 ,
 
-124 [
+125 [
 SYS_›í
 ] 
 sys_›í
 ,
 
-125 [
+126 [
 SYS_wrôe
 ] 
 sys_wrôe
 ,
 
-126 [
+127 [
 SYS_mknod
 ] 
 sys_mknod
 ,
 
-127 [
+128 [
 SYS_u∆ök
 ] 
 sys_u∆ök
 ,
 
-128 [
+129 [
 SYS_lök
 ] 
 sys_lök
 ,
 
-129 [
+130 [
 SYS_mkdú
 ] 
 sys_mkdú
 ,
 
-130 [
+131 [
 SYS_˛o£
 ] 
 sys_˛o£
 ,
 
-131 [
+132 [
 SYS_sw≠ªad
 ] 
 sys_sw≠ªad
 ,
 
-132 [
+133 [
 SYS_sw≠wrôe
 ] 
 sys_sw≠wrôe
 ,
 
-133 
+134 [
+SYS_ps
+] 
+sys_ps
+,
+
+135 
 	}
 };
 
-136 
+138 
 	$sysˇŒ
 ()
 
-138 
+140 
 num
 ;
 
-139 
+141 
 ¥oc
  *
 cuΩroc
@@ -22548,7 +22808,7 @@ cuΩroc
 	`my¥oc
 ();
 
-141 
+143 
 num
  = 
 cuΩroc
@@ -22558,7 +22818,7 @@ tf
 óx
 ;
 
-142 if(
+144 if(
 num
  > 0 &&Çum < 
 	`NELEM
@@ -22566,7 +22826,7 @@ num
 sysˇŒs
 ) && syscalls[num]) {
 
-143 
+145 
 cuΩroc
 ->
 tf
@@ -22578,11 +22838,11 @@ sysˇŒs
 num
 ]();
 
-145 
+147 
 	`˝rötf
 ("%d %s: unknown sys call %d\n",
 
-146 
+148 
 cuΩroc
 ->
 pid
@@ -22592,7 +22852,7 @@ pid
 num
 );
 
-147 
+149 
 cuΩroc
 ->
 tf
@@ -22600,7 +22860,7 @@ tf
 óx
  = -1;
 
-149 
+151 
 	}
 }
 
@@ -22741,6 +23001,30 @@ tf
 24 
 	#SYS_sw≠wrôe
  23
+
+	)
+
+25 
+	#SYS_ps
+ 24
+
+	)
+
+26 
+	#SYS_yõld
+ 25
+
+	)
+
+27 
+	#SYS_£äi˚
+ 26
+
+	)
+
+28 
+	#SYS_gëni˚
+ 27
 
 	)
 
@@ -24690,6 +24974,42 @@ xticks
 	}
 }
 
+94 
+	$sys_ps
+()
+
+96  
+	`ps
+();
+
+97 
+	}
+}
+
+99 
+	$sys_£äi˚
+()
+
+101  
+	`£äi˚
+();
+
+102 
+	}
+}
+
+103 
+	$gëni˚
+()
+
+105  
+	`gëni˚
+();
+
+106 
+	}
+}
+
 	@trap.c
 
 1 
@@ -25056,29 +25376,7 @@ DPL_USER
 	`exô
 ();
 
-109 if(
-	`my¥oc
-(Ë&& my¥oc()->
-°©e
- =
-RUNNING
- &&
-
-110 
-tf
-->
-å≠no
- =
-T_IRQ0
-+
-IRQ_TIMER
-)
-
-111 
-	`yõld
-();
-
-114 if(
+116 if(
 	`my¥oc
 (Ë&& my¥oc()->
 kûÀd
@@ -25090,11 +25388,11 @@ cs
 DPL_USER
 )
 
-115 
+117 
 	`exô
 ();
 
-116 
+118 
 	}
 }
 
@@ -26386,63 +26684,81 @@ fd
 	`sw≠wrôe
 (const *, );
 
+28 
+	`ps
+();
+
+29 
+	`£äi˚
+(
+pid
+, 
+ni˚_vÆ
+);
+
 30 
+	`gëni˚
+(
+pid
+);
+
+33 
 	`°©
 (c⁄° *, 
 °©
 *);
 
-31 * 
+34 * 
 	`°r˝y
 (*, const *);
 
-32 *
+35 *
 	`memmove
 (*, const *, );
 
-33 * 
+36 * 
 	`°rchr
 (c⁄° *, 
 c
 );
 
-34 
+37 
 	`°rcmp
 (const *, const *);
 
-35 
+38 
 	`¥ötf
 (, const *, ...);
 
-36 * 
+39 * 
 	`gës
 (*, 
 max
 );
 
-37 
+40 
 uöt
  
 	`°æí
 (const *);
 
-38 * 
+41 * 
 	`mem£t
 (*, , 
 uöt
 );
 
-39 * 
+42 * 
 	`mÆloc
 (
 uöt
 );
 
-40 
+43 
 	`‰ì
 (*);
 
-41 
+44 
 	`©oi
 (const *);
 
@@ -48149,8 +48465,8 @@ __GCC_IEC_559_COMPLEX
 .
 1
 /usr/include
-78
-739
+80
+759
 asm.h
 bio.c
 bootmain.c
@@ -48194,10 +48510,12 @@ pipe.c
 printf.c
 proc.c
 proc.h
+ps.c
 rm.c
 sh.c
 sleeplock.c
 sleeplock.h
+something/t1.c
 spinlock.c
 spinlock.h
 stat.h

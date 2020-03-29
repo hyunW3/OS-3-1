@@ -1,4 +1,6 @@
+set ts=4
+set shiftwidth=4
 set number
-set tags=/home/hw/xv6-sse-local/tags
+set tags=/home/hyun/OS-3-1/tags
 set cst
-cs add /home/hw/xv6-sse-local/scope.out /home/hw/xv6-sse-local/
+cs add /home/hyun/OS-3-1/scope.out /home/hyun/OS-3-1/
