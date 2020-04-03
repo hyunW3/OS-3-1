@@ -89,8 +89,9 @@ found:
   p->state = EMBRYO;
   p->pid = nextpid++;
   //p->priority = setnice();
-  p->priority = 5;
-  release(&ptable.lock);
+  p->nice = 5;
+  p->runtime =0;
+	release(&ptable.lock);
 
   // Allocate kernel stack.
   if((p->kstack = kalloc()) == 0){
@@ -140,7 +141,6 @@ userinit(void)
   p->tf->eflags = FL_IF;
   p->tf->esp = PGSIZE;
   p->tf->eip = 0;  // beginning of initcode.S
-
   safestrcpy(p->name, "initcode", sizeof(p->name));
   p->cwd = namei("/");
 
@@ -151,7 +151,7 @@ userinit(void)
   acquire(&ptable.lock);
 
   p->state = RUNNABLE;
-
+  p->nice = 5;
   release(&ptable.lock);
 }
 
@@ -201,7 +201,7 @@ fork(void)
   np->sz = curproc->sz;
   np->parent = curproc;
   *np->tf = *curproc->tf;
-  np->priority = curproc->priority;
+  np->nice = curproc->nice;
   // Clear %eax so that fork returns 0 in the child.
   np->tf->eax = 0;
 
@@ -544,11 +544,11 @@ ps(void)
 
 	//lookup
 	acquire(&ptable.lock);
-	cprintf("ticks : %d\nname \t nice \t pid \t state \t \n",ticks);
+	cprintf("current ticks : %d\nname \t nice \t pid \t state \t\t runtime \t \n",ticks);
 	for(p =ptable.proc; p< &ptable.proc[NPROC]; p++){
-		if(p->state == SLEEPING) cprintf("%s \t %d  \t %d  \t SLEEPING \t \n",p->name,p->priority,p->pid);
-		else if(p->state == RUNNING) cprintf("%s \t %d  \t %d  \t RUNNING \t \n",p->name,p->priority,p->pid);
-		else if(p->state == RUNNABLE) cprintf("%s \t %d  \t %d  \t RUNNABLE \t \n",p->name,p->priority,p->pid);
+		if(p->state == SLEEPING) cprintf("%s \t %d  \t %d  \t SLEEPING \t %d \t \n",p->name,p->nice,p->pid,p->runtime);
+		else if(p->state == RUNNING) cprintf("%s \t %d  \t %d  \t RUNNING \t %d \t\n",p->name,p->nice,p->pid,p->runtime);
+		else if(p->state == RUNNABLE) cprintf("%s \t %d  \t %d  \t RUNNABLE \t %d \t \n",p->name,p->nice,p->pid,p->runtime);
 	}
 	release(&ptable.lock);
 	//yield();
@@ -559,8 +559,10 @@ int
 setnice(int pid,int nice_val)
 {
 	if(myproc()->pid == pid){
-		myproc()->priority = nice_val;
-		if(myproc()->priority == nice_val) return 0;
+		if(nice_val>=0 && nice_val <=10){
+			myproc()->nice = nice_val;
+			if(myproc()->nice == nice_val) return 0;
+		}
 	} 
 	return -1; // fail
 }
@@ -569,10 +571,12 @@ getnice(int pid)
 {
 	int val;
 	if(myproc()->pid == pid){
-		val = myproc()->priority;
-		if(val <0 || val>10) return -1;
-		else return val;	
-	}	
+		val = myproc()->nice;
+		if(val >=0 || val<=10) return val;	
+	}else if(pid == 1){
+		val = myproc()->nice;	
+		if(val >=0 || val<=10) return val;	
+	}
 	return -1;
 }
 

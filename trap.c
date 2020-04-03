@@ -107,12 +107,18 @@ trap(struct trapframe *tf)
   // Force process to give up CPU on clock tick.
   // If interrupts were on while locks held, would need to check nlock.
   // hyunwoong
-   /*
+  // when timer interrupt occurs, runtime of certain process increases.
 	if(myproc() && myproc()->state == RUNNING &&
      tf->trapno == T_IRQ0+IRQ_TIMER)
-    yield();
+    //yield();
+  	myproc()->runtime = myproc()->runtime+1;
+	
+  /*
+	if(myproc() && myproc()->state == RUNNING) {
+		myproc()->runtime = myproc()->runtime+1;
+  	}
   */
-  // Check if the process has been killed since we yielded
+	// Check if the process has been killed since we yielded
   if(myproc() && myproc()->killed && (tf->cs&3) == DPL_USER)
     exit();
 }

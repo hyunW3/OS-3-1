@@ -26,6 +26,7 @@ int uptime(void);
 int swapread(const char*, int);
 int swapwrite(const char*, int);
 int ps(void);
+void yield(void);
 int setnice(int pid, int nice_val); 
 int	getnice(int pid); 
 

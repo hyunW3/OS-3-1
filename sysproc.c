@@ -95,6 +95,11 @@ sys_ps(void)
 {
 	return ps();
 }
+void
+sys_yield(void)
+{
+	yield();
+}
 int 
 sys_setnice(void)
 {
