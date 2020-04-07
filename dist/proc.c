@@ -544,6 +544,9 @@ ps(void)
 		if(p->state == SLEEPING) cprintf("%s \t %d  \t %d  \t SLEEPING \t %d \t \n",p->name,p->nice,p->pid,p->runtime);
 		else if(p->state == RUNNING) cprintf("%s \t %d  \t %d  \t RUNNING \t %d \t\n",p->name,p->nice,p->pid,p->runtime);
 		else if(p->state == RUNNABLE) cprintf("%s \t %d  \t %d  \t RUNNABLE \t %d \t \n",p->name,p->nice,p->pid,p->runtime);
+		//else if(p->state == UNUSED) cprintf("%s \t %d  \t %d  \t UNUSED \t %d \t \n",p->name,p->nice,p->pid,p->runtime);
+		else if(p->state == ZOMBIE) cprintf("%s \t %d  \t %d  \t ZOMBIE \t %d \t \n",p->name,p->nice,p->pid,p->runtime);
+		//else if(p->state == EMBRYO) cprintf("%s \t %d  \t %d  \t EMBRYO \t %d \t \n",p->name,p->nice,p->pid,p->runtime);
 	}
 	release(&ptable.lock);
 	//yield();
