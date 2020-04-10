@@ -88,10 +88,12 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
-  //p->priority = setnice();
-  p->nice = 5;
+  
+  p->nice = 0;
   p->runtime =0;
-	release(&ptable.lock);
+  p->vruntime =0;
+  p->weight = 1024;
+  release(&ptable.lock);
 
   // Allocate kernel stack.
   if((p->kstack = kalloc()) == 0){
@@ -151,7 +153,8 @@ userinit(void)
   acquire(&ptable.lock);
 
   p->state = RUNNABLE;
-  p->nice = 5;
+  p->nice = 0;
+  p->weight = 1024;
   release(&ptable.lock);
 }
 
@@ -201,7 +204,10 @@ fork(void)
   np->sz = curproc->sz;
   np->parent = curproc;
   *np->tf = *curproc->tf;
+  //add value
   np->nice = curproc->nice;
+  np->weight = curproc->weight;
+  np->vruntime = curproc->vruntime;
   // Clear %eax so that fork returns 0 in the child.
   np->tf->eax = 0;
 
@@ -464,6 +470,7 @@ wakeup1(void *chan)
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
     if(p->state == SLEEPING && p->chan == chan)
       p->state = RUNNABLE;
+	  // cal vruntime =  minimum vruntime of processes in the ready queue - vruntime(1tick)
 }
 
 // Wake up all processes sleeping on chan.
@@ -544,13 +551,13 @@ ps(void)
 
 	//lookup
 	acquire(&ptable.lock);
-	cprintf("current ticks : %d\nname \t nice \t pid \t state \t\t runtime \t \n",ticks);
+	cprintf("current ticks : %d\nname \t\t pid \t state \t\t priority\t runtime/weight\t runtime \t vruntime \n",ticks);
 	for(p =ptable.proc; p< &ptable.proc[NPROC]; p++){
-		if(p->state == SLEEPING) cprintf("%s \t %d  \t %d  \t SLEEPING \t %d \t \n",p->name,p->nice,p->pid,p->runtime);
-		else if(p->state == RUNNING) cprintf("%s \t %d  \t %d  \t RUNNING \t %d \t\n",p->name,p->nice,p->pid,p->runtime);
-		else if(p->state == RUNNABLE) cprintf("%s \t %d  \t %d  \t RUNNABLE \t %d \t \n",p->name,p->nice,p->pid,p->runtime);
+		if(p->state == SLEEPING) cprintf("%s \t\t %d  \t SLEEPING \t %d  \t\t %d \t\t %d \t\t %d \t \n",p->name,p->pid,p->nice,1,p->runtime,p->vruntime);
+		else if(p->state == RUNNING) cprintf("%s \t\t %d  \t RUNNING \t %d  \t\t %d \t\t %d \t\t %d \t \n",p->name,p->pid,p->nice,1,p->runtime,p->vruntime);
+		else if(p->state == RUNNABLE) cprintf("%s \t\t %d  \t RUNNABLE \t %d  \t\t %d \t\t %d \t\t %d \t \n",p->name,p->pid,p->nice,1,p->runtime,p->vruntime);
 		//else if(p->state == UNUSED) cprintf("%s \t %d  \t %d  \t UNUSED \t %d \t \n",p->name,p->nice,p->pid,p->runtime);
-		else if(p->state == ZOMBIE) cprintf("%s \t %d  \t %d  \t ZOMBIE \t %d \t \n",p->name,p->nice,p->pid,p->runtime);
+		else if(p->state == ZOMBIE) cprintf("%s \t\t %d  \t ZOMBIE \t %d  \t\t %d \t\t %d \t\t %d \t \n",p->name,p->pid,p->nice,1,p->runtime,p->vruntime);
 		//else if(p->state == EMBRYO) cprintf("%s \t %d  \t %d  \t EMBRYO \t %d \t \n",p->name,p->nice,p->pid,p->runtime);
 	}
 	release(&ptable.lock);

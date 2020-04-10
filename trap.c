@@ -111,8 +111,9 @@ trap(struct trapframe *tf)
 	if(myproc() && myproc()->state == RUNNING &&
      tf->trapno == T_IRQ0+IRQ_TIMER)
     //yield();
-  	myproc()->runtime = myproc()->runtime+1;
-	
+  	myproc()->runtime +=1;
+	myproc()->vruntime += (int)(1024 /(1800)); 
+		
   /*
 	if(myproc() && myproc()->state == RUNNING) {
 		myproc()->runtime = myproc()->runtime+1;

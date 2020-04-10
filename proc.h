@@ -51,7 +51,10 @@ struct proc {
   char name[16];               // Process name (debugging)
 // add
   int nice;				   //priority by nice value (0~10)	
+  int weight;				// nice to weight, to calculate vruntime
   int runtime;				//time duration that process hold
+  int vruntime;				//
+
 };
 
 // Process memory is laid out contiguously, low addresses first:
