@@ -584,7 +584,7 @@ setnice(int pid,int nice_val)
 			}
 		}
 	} 
-	return -1; // fail
+	return -10; // fail
 }
 int 
 getnice(int pid)
@@ -597,6 +597,6 @@ getnice(int pid)
 		val = myproc()->nice;	
 		if(val >=-5 || val<=5) return val;	
 	}
-	return -1;
+	return -10;
 }
 
