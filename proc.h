@@ -54,7 +54,7 @@ struct proc {
   int weight;				// nice to weight, to calculate vruntime
   int runtime;				//time duration that process hold
   int vruntime;				//
-
+  int start_time;			// to calculate (delta)runtime
 };
 
 // Process memory is laid out contiguously, low addresses first:
