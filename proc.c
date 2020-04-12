@@ -13,6 +13,7 @@ struct {
 } ptable;
 
 static struct proc *initproc;
+int weight_val[11] = { 3121, 2501, 1991, 1586, 1277, 1024, 820, 655, 526, 423, 355 };
 
 int nextpid = 1;
 extern void forkret(void);
@@ -92,7 +93,7 @@ found:
   p->nice = 0;
   p->runtime =0;
   p->vruntime =0;
-  p->weight = 1024;
+  p->weight = weight_val[p->nice+5];
   p->start_time=ticks;
   release(&ptable.lock);
 
@@ -154,6 +155,8 @@ userinit(void)
   acquire(&ptable.lock);
 
   p->state = RUNNABLE;
+  p->runtime=0;
+  p->vruntime=0;
   p->nice = 0;
   p->weight = 1024;
   release(&ptable.lock);
@@ -335,7 +338,6 @@ scheduler(void)
 {
   struct proc *p;
   struct cpu *c = mycpu();
- // c->proc->vruntime += (ticks-c->proc->start_time)*(int)(1024/c->proc->weight); 
   c->proc = 0;
   
   for(;;){
@@ -576,7 +578,10 @@ setnice(int pid,int nice_val)
 	if(myproc()->pid == pid){
 		if(nice_val>=-5 && nice_val <=5){
 			myproc()->nice = nice_val;
-			if(myproc()->nice == nice_val) return 0;
+			if(myproc()->nice == nice_val){
+				myproc()->weight = weight_val[nice_val+5];
+				 return 0;
+			}
 		}
 	} 
 	return -1; // fail

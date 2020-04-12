@@ -110,15 +110,15 @@ trap(struct trapframe *tf)
   // when timer interrupt occurs, runtime of certain process increases.
 	if(myproc() && myproc()->state == RUNNING &&
      tf->trapno == T_IRQ0+IRQ_TIMER)
-    //yield();
-  	myproc()->runtime +=1;
-	//myproc()->vruntime += (int)(1024/(1800)); 
-		
-  /*
-	if(myproc() && myproc()->state == RUNNING) {
-		myproc()->runtime = myproc()->runtime+1;
-  	}
-  */
+    {
+	//yield();
+  	//cprintf("runtime : %d vruntime: %d\n",myproc()->runtime,myproc()->vruntime);
+  //	cprintf("runtime : %d\n",myproc()->runtime);
+	myproc()->runtime +=1;
+    //myproc()->vruntime += (int)(1024/(1800)); 
+	myproc()->vruntime +=1; 
+	}	
+  
 	// Check if the process has been killed since we yielded
   if(myproc() && myproc()->killed && (tf->cs&3) == DPL_USER)
     exit();

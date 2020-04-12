@@ -31,7 +31,6 @@ struct context {
   uint ebp;
   uint eip;
 };
-
 enum procstate { UNUSED, EMBRYO, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
 
 // Per-process state
@@ -53,7 +52,7 @@ struct proc {
   int nice;				   //priority by nice value (0~10)	
   int weight;				// nice to weight, to calculate vruntime
   int runtime;				//time duration that process hold
-  int vruntime;				//
+  int vruntime;				// to apply cfs scheduler, assign by runtime & nice_val
   int start_time;			// to calculate (delta)runtime
 };
 
