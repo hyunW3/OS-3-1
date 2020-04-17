@@ -579,7 +579,39 @@ procdump(void)
   }
 }
 // own syscall
+void print_state(const struct proc *p){
+	int len_name=0;
+	for(len_name=0; p->name[len_name] != '\0'; len_name++);
+	if(len_name >2){
+		if(p->runtime <100000000){
+			if(p->state == SLEEPING)      cprintf("%s     \t %d  \t SLEEPING \t %d      \t %d      \t %d      \t%d \t \n",p->name,p->pid,p->nice,p->runtime/p->weight,p->runtime,p->vruntime);
+			else if(p->state == RUNNING)  cprintf("%s     \t %d  \t RUNNING \t %d      \t %d      \t %d      \t%d \t \n",p->name,p->pid,p->nice,p->runtime/p->weight,p->runtime,p->vruntime);
+			else if(p->state == RUNNABLE) cprintf("%s     \t %d  \t RUNNABLE \t %d      \t %d      \t %d      \t%d \t \n",p->name,p->pid,p->nice,p->runtime/p->weight,p->runtime,p->vruntime);
+			else if(p->state == ZOMBIE)   cprintf("%s     \t %d  \t ZOMBIE \t %d      \t %d      \t %d      \t%d \t \n",p->name,p->pid,p->nice,p->runtime/p->weight,p->runtime,p->vruntime);
+		} else {
+			if(p->state == SLEEPING) 	  cprintf("%s     \t %d  \t SLEEPING \t %d      \t %d      \t %d\t%d \t \n",p->name,p->pid,p->nice,p->runtime/p->weight,p->runtime,p->vruntime);
+			else if(p->state == RUNNING)  cprintf("%s     \t %d  \t RUNNING \t %d      \t %d      \t %d\t%d \t \n",p->name,p->pid,p->nice,p->runtime/p->weight,p->runtime,p->vruntime);
+			else if(p->state == RUNNABLE) cprintf("%s     \t %d  \t RUNNABLE \t %d      \t %d      \t %d\t%d \t \n",p->name,p->pid,p->nice,p->runtime/p->weight,p->runtime,p->vruntime);
+			else if(p->state == ZOMBIE)   cprintf("%s     \t %d  \t ZOMBIE \t %d      \t %d      \t %d\t%d \t \n",p->name,p->pid,p->nice,p->runtime/p->weight,p->runtime,p->vruntime);
+		}
+	} else { // short ps name
+		if(p->runtime <1000000000){
+			if(p->state == SLEEPING)      cprintf("%s \t\t %d  \t SLEEPING \t %d      \t %d      \t %d      \t%d \t \n",p->name,p->pid,p->nice,p->runtime/p->weight,p->runtime,p->vruntime);
+			else if(p->state == RUNNING)  cprintf("%s \t\t %d  \t RUNNING \t %d      \t %d      \t %d      \t%d \t \n",p->name,p->pid,p->nice,p->runtime/p->weight,p->runtime,p->vruntime);
+			else if(p->state == RUNNABLE) cprintf("%s \t\t %d  \t RUNNABLE \t %d      \t %d      \t %d      \t%d \t \n",p->name,p->pid,p->nice,p->runtime/p->weight,p->runtime,p->vruntime);
+			else if(p->state == ZOMBIE)   cprintf("%s \t\t %d  \t ZOMBIE \t %d      \t %d      \t %d      \t%d \t \n",p->name,p->pid,p->nice,p->runtime/p->weight,p->runtime,p->vruntime);
+		} else {
+			if(p->state == SLEEPING) 	  cprintf("%s \t\t %d  \t SLEEPING \t %d      \t %d      \t %d\t%d \t \n",p->name,p->pid,p->nice,p->runtime/p->weight,p->runtime,p->vruntime);
+			else if(p->state == RUNNING)  cprintf("%s \t\t %d  \t RUNNING \t %d      \t %d      \t %d\t%d \t \n",p->name,p->pid,p->nice,p->runtime/p->weight,p->runtime,p->vruntime);
+			else if(p->state == RUNNABLE) cprintf("%s \t\t %d  \t RUNNABLE \t %d      \t %d      \t %d\t%d \t \n",p->name,p->pid,p->nice,p->runtime/p->weight,p->runtime,p->vruntime);
+			else if(p->state == ZOMBIE)   cprintf("%s \t\t %d  \t ZOMBIE \t %d      \t %d      \t %d\t%d \t \n",p->name,p->pid,p->nice,p->runtime/p->weight,p->runtime,p->vruntime);
+		}
+	}
 
+//else if(p->state == EMBRYO) cprintf("%s \t %d  \t %d  \t EMBRYO \t %d \t \n",p->name,p->nice,p->pid,p->runtime);
+//else if(p->state == UNUSED) cprintf("%s \t %d  \t %d  \t UNUSED \t %d \t \n",p->name,p->nice,p->pid,p->runtime);
+
+}
 int 
 ps(void)
 {
@@ -588,15 +620,10 @@ ps(void)
 
 	//lookup
 	acquire(&ptable.lock);
-	cprintf("current ticks : %d\nname \t\t pid \t state \t\t priority\t runtime/weight\t runtime \tvruntime \n",ticks*1000);
+	cprintf("current ticks : %d\nname \t\t pid \t state \t\t priority\t runtime/weight\t runtime\tvruntime \n",ticks*1000);
 	// start_time should be changed to runtime/weight
 	for(p =ptable.proc; p< &ptable.proc[NPROC]; p++){
-		if(p->state == SLEEPING) cprintf("%s\t\t %d  \t SLEEPING \t %d  \t\t %d \t\t %d      \t%d \t \n",p->name,p->pid,p->nice,p->runtime/p->weight,p->runtime,p->vruntime);
-		else if(p->state == RUNNING) cprintf("%s\t\t %d  \t RUNNING \t %d  \t\t %d \t\t %d      \t%d \t \n",p->name,p->pid,p->nice,p->runtime/p->weight,p->runtime,p->vruntime);
-		else if(p->state == RUNNABLE) cprintf("%s\t\t %d  \t RUNNABLE \t %d  \t\t %d \t\t %d      \t%d \t \n",p->name,p->pid,p->nice,p->runtime/p->weight,p->runtime,p->vruntime);
-		//else if(p->state == UNUSED) cprintf("%s \t %d  \t %d  \t UNUSED \t %d \t \n",p->name,p->nice,p->pid,p->runtime);
-		else if(p->state == ZOMBIE) cprintf("%s\t\t %d  \t ZOMBIE \t %d  \t\t %d \t\t %d  \t%d \t \n",p->name,p->pid,p->nice,p->runtime/p->weight,p->runtime,p->vruntime);
-		//else if(p->state == EMBRYO) cprintf("%s \t %d  \t %d  \t EMBRYO \t %d \t \n",p->name,p->nice,p->pid,p->runtime);
+		print_state(p);
 	}
 	release(&ptable.lock);
 	//yield();

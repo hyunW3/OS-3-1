@@ -1,4 +1,4 @@
-cscope 15 $HOME/OS-3-1               0000572318
+cscope 15 $HOME/OS-3-1               0000573121
 	@asm.h
 
 5 
@@ -52333,20 +52333,26 @@ c
 	~"¥šlock.h
 "
 
+10 
+	s±abË
+{
+
 11 
 ¥šlock
  
-lock
+	mlock
 ;
 
 12 
 ´oc
-…roc[
+ 
+	m´oc
+[
 NPROC
 ];
 
 13 } 
-±abË
+	g±abË
 ;
 
 15 
@@ -54411,7 +54417,7 @@ lock
 
 591 
 	`ýrštf
-("cu¼’ˆtick : %d\Âam\t\ˆpid \ˆ¡©\t\ˆ´iÜ™y\ˆruÁime/weight\ˆruÁim\tvruÁim\n",
+("cu¼’ˆtick : %d\Âam\t\ˆpid \ˆ¡©\t\ˆ´iÜ™y\ˆruÁime/weight\ˆruÁime\tvruÁim\n",
 ticks
 *1000);
 
@@ -54433,7 +54439,7 @@ p
 SLEEPING
 è
 	`ýrštf
-("%s\t\ˆ%d \ˆSLEEPING \ˆ%d \t\ˆ%d \t\ˆ%d \t%d \ˆ\n",p->
+("%s\t\ˆ%d \ˆSLEEPING \ˆ%d \ˆ%d \ˆ%d \t%d \ˆ\n",p->
 Çme
 ,p->
 pid
@@ -54455,7 +54461,7 @@ p
 RUNNING
 è
 	`ýrštf
-("%s\t\ˆ%d \ˆRUNNING \ˆ%d \t\ˆ%d \t\ˆ%d \t%d \ˆ\n",p->
+("%s\t\ˆ%d \ˆRUNNING \ˆ%d \ˆ%d \ˆ%d \t%d \ˆ\n",p->
 Çme
 ,p->
 pid
@@ -54477,7 +54483,7 @@ p
 RUNNABLE
 è
 	`ýrštf
-("%s\t\ˆ%d \ˆRUNNABLE \ˆ%d \t\ˆ%d \t\ˆ%d \t%d \ˆ\n",p->
+("%s\t\ˆ%d \ˆRUNNABLE \ˆ%d \ˆ%d \ˆ%d \t%d \ˆ\n",p->
 Çme
 ,p->
 pid
@@ -54499,7 +54505,7 @@ p
 ZOMBIE
 è
 	`ýrštf
-("%s\t\ˆ%d \ˆZOMBIE \ˆ%d \t\ˆ%d \t\ˆ%d \t%d \ˆ\n",p->
+("%s\t\ˆ%d \ˆZOMBIE \ˆ%d \ˆ%d \ˆ%d \t%d \ˆ\n",p->
 Çme
 ,p->
 pid
@@ -97358,43 +97364,135 @@ x
 	~"¥šlock.h
 "
 
+11 
+	s±abË
+{
+
 12 
+¥šlock
+ 
+lock
+;
+
+13 
+´oc
+…roc[
+NPROC
+];
+
+14 } 
+±abË
+;
+
+16 
+	$ruÁime_ov”æow_hªdË
+(){
+
+17 
+´oc
+ *
+p
+;
+
+18 
+	`acquœe
+(&
+±abË
+.
+lock
+);
+
+19 
+p
+ = 
+±abË
+.
+´oc
+;… < &±abË.´oc[
+NPROC
+];…++){
+
+22 
+p
+->
+ruÁime
+ = (p->runtime >> 10);
+
+23 
+p
+->
+vruÁime
+ = (p->vruntime >>10);
+
+24 
+p
+->
+¡¬t_time
+ = (p->start_time >>10);
+
+25 if(
+p
+->
+pid
+ !ð0è
+	`ýrštf
+("pid :%d -> %d %d %d\n",p->pid,p->
+ruÁime
+,p->
+vruÁime
+,p->
+¡¬t_time
+);
+
+27 
+	`»Ëa£
+(&
+±abË
+.
+lock
+);
+
+28 
+	}
+};
+
+30 
 g©edesc
  
 	gidt
 [256];
 
-13 
+31 
 ušt
  
 veùÜs
 [];
 
-14 
+32 
 ¥šlock
  
 	gtick¦ock
 ;
 
-15 
+33 
 ušt
  
 	gticks
 ;
 
-18 
+36 
 	$tvš™
 ()
 
-20 
+38 
 i
 ;
 
-22 
+40 
 i
  = 0; i < 256; i++)
 
-23 
+41 
 	`SETGATE
 (
 idt
@@ -97406,7 +97504,7 @@ SEG_KCODE
 veùÜs
 [i], 0);
 
-24 
+42 
 	`SETGATE
 (
 idt
@@ -97420,31 +97518,31 @@ veùÜs
 DPL_USER
 );
 
-26 
+44 
 	`š™lock
 (&
 tick¦ock
 , "time");
 
-27 
+45 
 	}
 }
 
-30 
+48 
 	$idtš™
 ()
 
-32 
+50 
 	`lidt
 (
 idt
 , (idt));
 
-33 
+51 
 	}
 }
 
-37 
+55 
 	$Œ­
 (
 Œ­äame
@@ -97452,7 +97550,7 @@ idt
 tf
 )
 
-39 if(
+57 if(
 tf
 ->
 Œ­no
@@ -97460,141 +97558,141 @@ tf
 T_SYSCALL
 ){
 
-40 if(
+58 if(
 	`my´oc
 ()->
 kžËd
 )
 
-41 
+59 
 	`ex™
 ();
 
-42 
+60 
 	`my´oc
 ()->
 tf
  =f;
 
-43 
+61 
 	`sysÿÎ
 ();
 
-44 if(
+62 if(
 	`my´oc
 ()->
 kžËd
 )
 
-45 
+63 
 	`ex™
 ();
 
-49 
+67 
 tf
 ->
 Œ­no
 ){
 
-50 
+68 
 T_IRQ0
  + 
 IRQ_TIMER
 :
 
-51 if(
+69 if(
 	`ýuid
 () == 0){
 
-52 
+70 
 	`acquœe
 (&
 tick¦ock
 );
 
-53 
+71 
 ticks
 ++;
 
-54 
+72 
 	`wakeup
 (&
 ticks
 );
 
-55 
+73 
 	`»Ëa£
 (&
 tick¦ock
 );
 
-57 
+75 
 	`Ïpiûoi
 ();
 
-59 
+77 
 T_IRQ0
  + 
 IRQ_IDE
 :
 
-60 
+78 
 	`idešŒ
 ();
 
-61 
+79 
 	`Ïpiûoi
 ();
 
-67 
+85 
 T_IRQ0
  + 
 IRQ_IDE
 +1:
 
-70 
+88 
 T_IRQ0
  + 
 IRQ_KBD
 :
 
-71 
+89 
 	`kbdšŒ
 ();
 
-72 
+90 
 	`Ïpiûoi
 ();
 
-74 
+92 
 T_IRQ0
  + 
 IRQ_COM1
 :
 
-75 
+93 
 	`u¬tšŒ
 ();
 
-76 
+94 
 	`Ïpiûoi
 ();
 
-78 
+96 
 T_IRQ0
  + 7:
 
-79 
+97 
 T_IRQ0
  + 
 IRQ_SPURIOUS
 :
 
-80 
+98 
 	`ýrštf
 ("cpu%d: spurious interrupt‡t %x:%x\n",
 
-81 
+99 
 	`ýuid
 (), 
 tf
@@ -97604,11 +97702,11 @@ cs
 e
 );
 
-82 
+100 
 	`Ïpiûoi
 ();
 
-87 if(
+105 if(
 	`my´oc
 (è=ð0 || (
 tf
@@ -97616,11 +97714,11 @@ tf
 cs
 &3) == 0){
 
-89 
+107 
 	`ýrštf
 ("unexpectedrap %d from cpu %dƒip %x (cr2=0x%x)\n",
 
-90 
+108 
 tf
 ->
 Œ­no
@@ -97632,15 +97730,15 @@ e
 	`rü2
 ());
 
-91 
+109 
 	`·nic
 ("trap");
 
-94 
+112 
 	`ýrštf
 ("pid %d %s:rap %dƒrr %d on cpu %d "
 
-96 
+114 
 	`my´oc
 ()->
 pid
@@ -97652,7 +97750,7 @@ tf
 Œ­no
 ,
 
-97 
+115 
 tf
 ->
 ”r
@@ -97664,13 +97762,13 @@ e
 	`rü2
 ());
 
-98 
+116 
 	`my´oc
 ()->
 kžËd
  = 1;
 
-104 if(
+122 if(
 	`my´oc
 (è&& my´oc()->
 kžËd
@@ -97682,11 +97780,11 @@ cs
 DPL_USER
 )
 
-105 
+123 
 	`ex™
 ();
 
-111 if(
+129 if(
 	`my´oc
 (è&& my´oc()->
 ¡©e
@@ -97694,7 +97792,7 @@ DPL_USER
 RUNNING
  &&
 
-112 
+130 
 tf
 ->
 Œ­no
@@ -97704,33 +97802,75 @@ T_IRQ0
 IRQ_TIMER
 )
 
-114 
+132 
+šc
+ = 1000000000;
+
+133 if((
 	`my´oc
 ()->
 ruÁime
- +=1000;
++
+šc
+è<0 || (my´oc()->
+vruÁime
++inc) <0){
 
-115 
+134 if((
+	`my´oc
+()->
+ruÁime
++
+šc
+è<0èmy´oc()->ruÁimð
+MAX_INT
+;
+
+135 if((
 	`my´oc
 ()->
 vruÁime
- +ð()1000*(1024/(my´oc()->
-weight
-));
++
+šc
+è<0èmy´oc()->vruÁimð
+MAX_INT
+;
 
-121 if(
+136 
+	`ruÁime_ov”æow_hªdË
+();
+
+138 
+	`my´oc
+()->
+ruÁime
+ +=
+šc
+;
+
+139 
+	`my´oc
+()->
+vruÁime
+ +ð()
+šc
+*1024/(my´oc()->
+weight
+);
+
+142 if(
 	`my´oc
 ()->
 time_¦iû
  >0){
 
-122 
+143 
 	`my´oc
 ()->
 time_¦iû
  -=1000;
 
-126 
+147 
 	`£Šiû
 (
 	`my´oc
@@ -97740,11 +97880,15 @@ pid
 niû
 );
 
-128 
+149 
+	`ps
+();
+
+150 
 	`y›ld
 ();
 
-133 if(
+155 if(
 	`my´oc
 (è&& my´oc()->
 kžËd
@@ -97756,11 +97900,11 @@ cs
 DPL_USER
 )
 
-134 
+156 
 	`ex™
 ();
 
-135 
+157 
 	}
 }
 
@@ -97895,6 +98039,12 @@ DPL_USER
 37 
 	#IRQ_SPURIOUS
  31
+
+	)
+
+38 
+	#MAX_INT
+ 2147483647
 
 	)
 

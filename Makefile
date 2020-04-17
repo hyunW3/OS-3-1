@@ -184,7 +184,8 @@ UPROGS=\
 	_test1\
 	_test2\
 	_testcfs\
-    _zombie\
+	_longname_T\
+	_zombie\
 	_ps\
 	_swaptest\
 
@@ -259,6 +260,7 @@ EXTRA=\
 	ln.c ls.c mkdir.c rm.c stressfs.c usertests.c wc.c ps.c zombie.c\
 	test1.c test2.c testcfs.c swaptest.c\
 	printf.c umalloc.c\
+	longname_T.c\
 	README dot-bochsrc *.pl toc.* runoff runoff1 runoff.list\
 	.gdbinit.tmpl gdbutil\
 
