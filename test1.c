@@ -27,13 +27,13 @@ void test_p1_1()
 			printf(1, "WRONG %d\n",getnice(pid));
 
 		printf(1, "case 4. set nice value of non-existing process: ");
-		if (setnice(100, 3) == -10) 
+		if (setnice(100, 3) == -1) 
 			printf(1, "OK\n");
 		else
 			printf(1, "WRONG %d\n",setnice(100,3));
 
 		printf(1, "case 5. set wrong nice value of current process: ");
-		if (setnice(pid, -10) == -10 && setnice(pid, 11) == -10) 
+		if (setnice(pid, -10) == -1 && setnice(pid, 11) == -1) 
 			//printf(1, "OK %d %d\n",setnice(pid, -1),setnice(pid, 11));
 			printf(1, "OK\n");
 		else

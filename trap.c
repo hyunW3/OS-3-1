@@ -47,7 +47,7 @@ trap(struct trapframe *tf)
   }
 
   switch(tf->trapno){
-  case T_IRQ0 + IRQ_TIMER:
+  case T_IRQ0 + IRQ_TIMER: // timer interrupt
     if(cpuid() == 0){
       acquire(&tickslock);
       ticks++;
@@ -111,12 +111,16 @@ trap(struct trapframe *tf)
 	if(myproc() && myproc()->state == RUNNING &&
      tf->trapno == T_IRQ0+IRQ_TIMER)
     {
-	//yield();
   	//cprintf("runtime : %d vruntime: %d\n",myproc()->runtime,myproc()->vruntime);
   //	cprintf("runtime : %d\n",myproc()->runtime);
-	myproc()->runtime +=1;
-    //myproc()->vruntime += (int)(1024/(1800)); 
-	myproc()->vruntime +=1; 
+		if(myproc()->time_slice >0){
+			myproc()->time_slice -=1;
+			myproc()->runtime +=1000;
+    		myproc()->vruntime += (int)1000*(1024/(myproc()->weight)); 
+		}else {
+			myproc()->time_slice = 10;
+			yield();
+		}
 	}	
   
 	// Check if the process has been killed since we yielded

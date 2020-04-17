@@ -54,6 +54,7 @@ struct proc {
   int runtime;				//time duration that process hold
   int vruntime;				// to apply cfs scheduler, assign by runtime & nice_val
   int start_time;			// to calculate (delta)runtime
+  int time_slice;			// init :10, decrease with each 10ms(10ticks)
 };
 
 // Process memory is laid out contiguously, low addresses first:
