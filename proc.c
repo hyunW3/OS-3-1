@@ -7,7 +7,7 @@
 #include "proc.h"
 #include "spinlock.h"
 
-struct {
+struct ptable{
   struct spinlock lock;
   struct proc proc[NPROC];
 } ptable;
@@ -365,14 +365,15 @@ scheduler(void)
 		
 	  }
 	}
+	p = smallest;
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
-      c->proc = smallest;
-      switchuvm(smallest);
-      smallest->state = RUNNING;
-	  smallest->start_time = ticks;
-      swtch(&(c->scheduler), smallest->context);
+      c->proc = p;
+      switchuvm(p);
+      p->state = RUNNING;
+	  p->start_time = ticks;
+      swtch(&(c->scheduler), p->context);
       switchkvm();
 	  c->proc = 0;
 	release(&ptable.lock);
@@ -620,8 +621,9 @@ setnice(int pid,int nice_val)
 				write=1;
 			}
 			// cal total weight
-			if(p->state != RUNNABLE) continue;
+			if(p->state != RUNNABLE && p->state != RUNNING) continue;
 			else {
+//				cprintf("pid : %d, weight :%d\n",p->pid,p->weight);
 				total_weight += p->weight;
 			}
 		}
@@ -629,10 +631,13 @@ setnice(int pid,int nice_val)
 		//total_weight == 0 when start xv6 & start process
 		//cprintf("NO RUNNABLE process : total_weight : 0\n");
 		if(total_weight != 0) {
+//			cprintf("total_weight : %d\n",total_weight);
   			acquire(&ptable.lock);
   			// cal time_slice
 			for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-   		 		p->time_slice = 10000*(p->weight/total_weight); // 10tick(*1000 mili tick) x weigth / total_weight 
+				if(p->state != RUNNABLE && p->state != RUNNING) continue;
+				p->time_slice = (10000*p->weight/total_weight); // 10tick(*1000 mili tick) x weigth / total_weight 
+//				cprintf("time_slice : %d(10000*(%d/%d)\n",p->time_slice,p->weight,total_weight);
   			}
   			release(&ptable.lock);
 		}

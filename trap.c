@@ -7,7 +7,11 @@
 #include "x86.h"
 #include "traps.h"
 #include "spinlock.h"
-
+// available? , is same struct call in proc.c (is sharing data?);
+extern struct ptable{
+  struct spinlock lock;
+  struct proc proc[NPROC];
+} ptable;
 // Interrupt descriptor table (shared by all CPUs).
 struct gatedesc idt[256];
 extern uint vectors[];  // in vectors.S: array of 256 entry pointers
@@ -111,19 +115,21 @@ trap(struct trapframe *tf)
 	if(myproc() && myproc()->state == RUNNING &&
      tf->trapno == T_IRQ0+IRQ_TIMER)
     {
-  	//cprintf("runtime : %d vruntime: %d\n",myproc()->runtime,myproc()->vruntime);
-  //	cprintf("runtime : %d\n",myproc()->runtime);
+		myproc()->runtime +=1000;
+    	myproc()->vruntime += (int)1000*(1024/(myproc()->weight)); 
+//		if(myproc()->runtime <0 || myproc()->vruntime <0){ //overflow handling
+		struct proc *p;
+		for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+	
+		}
+		// yield or not
 		if(myproc()->time_slice >0){
 			myproc()->time_slice -=1000;
-			myproc()->runtime +=1000;
-    		myproc()->vruntime += (int)1000*(1024/(myproc()->weight)); 
-			if(myproc()->runtime <0 || myproc()->vruntime <0){ //overflow handling
 
-			}
 		}else {
 			// time_slice to be reset
 			setnice(myproc()->pid,myproc()->nice); // should be change to set_time_slice
-			ps();
+//			ps();
 			yield();
 		}
 	}	

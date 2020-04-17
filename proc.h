@@ -56,7 +56,6 @@ struct proc {
   int start_time;			// to calculate (delta)runtime
   int time_slice;			// init :10, decrease with each 10ms(10ticks)
 };
-
 // Process memory is laid out contiguously, low addresses first:
 //   text
 //   original data and bss
