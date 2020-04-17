@@ -114,11 +114,16 @@ trap(struct trapframe *tf)
   	//cprintf("runtime : %d vruntime: %d\n",myproc()->runtime,myproc()->vruntime);
   //	cprintf("runtime : %d\n",myproc()->runtime);
 		if(myproc()->time_slice >0){
-			myproc()->time_slice -=1;
+			myproc()->time_slice -=1000;
 			myproc()->runtime +=1000;
     		myproc()->vruntime += (int)1000*(1024/(myproc()->weight)); 
+			if(myproc()->runtime <0 || myproc()->vruntime <0){ //overflow handling
+
+			}
 		}else {
-			myproc()->time_slice = 10;
+			// time_slice to be reset
+			setnice(myproc()->pid,myproc()->nice); // should be change to set_time_slice
+			ps();
 			yield();
 		}
 	}	

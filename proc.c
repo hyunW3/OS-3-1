@@ -90,14 +90,13 @@ found:
   p->state = EMBRYO;
   p->pid = nextpid++;
   
-  p->nice = 0;
   p->runtime =0;
   p->vruntime =0;
-  p->weight = weight_val[p->nice+5];
   p->start_time=ticks;
-  p->time_slice = 10; // scheduling latency == 10ticks
   release(&ptable.lock);
-
+  // setnice include lock
+  setnice(p->pid,0); // include set weight,time_slice
+  
   // Allocate kernel stack.
   if((p->kstack = kalloc()) == 0){
     p->state = UNUSED;
@@ -158,10 +157,9 @@ userinit(void)
   p->state = RUNNABLE;
   p->runtime=0;
   p->vruntime=0;
-  p->nice = 0;
-  p->weight = 1024;
-  p->time_slice = 10;
   release(&ptable.lock);
+  // setnice include lock
+  setnice(p->pid,0);
 }
 
 // Grow current process's memory by n bytes.
@@ -210,12 +208,6 @@ fork(void)
   np->sz = curproc->sz;
   np->parent = curproc;
   *np->tf = *curproc->tf;
-  //add value
-  np->nice = curproc->nice;
-  np->weight = curproc->weight;
-  np->vruntime = curproc->vruntime;
-  np->start_time = curproc->start_time;
-  np->time_slice = 10; 
   // Clear %eax so that fork returns 0 in the child.
   np->tf->eax = 0;
 
@@ -227,11 +219,14 @@ fork(void)
   safestrcpy(np->name, curproc->name, sizeof(curproc->name));
 
   pid = np->pid;
-
+  // setnice include lock
+  setnice(np->pid,curproc->nice);
+  
   acquire(&ptable.lock);
-
   np->state = RUNNABLE;
-
+  //add value
+  np->vruntime = curproc->vruntime;
+  np->start_time = curproc->start_time;
   release(&ptable.lock);
 
   return pid;
@@ -351,11 +346,11 @@ scheduler(void)
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
 	smallest = ptable.proc;
-	min_vruntime = -1111;
+	min_vruntime = -1;
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if((p->state != RUNNABLE) && (p->state != RUNNING))   continue;
 	  else {
-		if(min_vruntime == -1111){
+		if(min_vruntime == -1){
 			//cprintf("found!\n");
 			min_vruntime = p->vruntime;
 			smallest = p;
@@ -383,35 +378,6 @@ scheduler(void)
 	release(&ptable.lock);
   }
 
-/* 
-  for(;;){
-    // Enable interrupts on this processor.
-    sti();
-
-    // Loop over process table looking for process to run.
-    acquire(&ptable.lock);
-    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->state != RUNNABLE)
-        continue;
-
-      // Switch to chosen process.  It is the process's job
-      // to release ptable.lock and then reacquire it
-      // before jumping back to us.
-      c->proc = p;
-      switchuvm(p);
-      p->state = RUNNING;
-	  p->start_time = ticks;
-      swtch(&(c->scheduler), p->context);
-      switchkvm();
-
-      // Process is done running for now.
-      // It should have changed its p->state before coming back.
-      c->proc = 0;
-    }
-    release(&ptable.lock);
-
-  }
-*/
 }
 
 // Enter scheduler.  Must hold only ptable.lock
@@ -520,7 +486,6 @@ wakeup1(void *chan)
   int min_vruntime=-1;
 
   // find min_vruntime in runnable process
-  //acquire(&ptable.lock); 
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
 	if(p->state == RUNNABLE){
 		if(min_vruntime == -1){
@@ -532,9 +497,7 @@ wakeup1(void *chan)
 		}
 	}
   }
-  //release(&ptable.lock);
 
-  //acquire(&ptable.lock);
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
     if(p->state == SLEEPING && p->chan == chan){
       p->state = RUNNABLE;
@@ -542,8 +505,8 @@ wakeup1(void *chan)
 	  int vruntime_1tick= (int)1000*(1024/p->weight);
 	  if(min_vruntime == -1) p->vruntime = 0;
 	  else  p->vruntime = min_vruntime - vruntime_1tick; 
+	  //cprintf("wake up! pid:%d\n",p->pid);
 	}
-  //release(&ptable.lock);
 }
 
 // Wake up all processes sleeping on chan.
@@ -624,7 +587,7 @@ ps(void)
 
 	//lookup
 	acquire(&ptable.lock);
-	cprintf("current ticks : %d\nname \t\t pid \t state \t\t priority\t runtime/weight\t runtime \t vruntime \n",ticks*1000);
+	cprintf("current ticks : %d\nname \t\t pid \t state \t\t priority\t runtime/weight\t runtime \tvruntime \n",ticks*1000);
 	// start_time should be changed to runtime/weight
 	for(p =ptable.proc; p< &ptable.proc[NPROC]; p++){
 		if(p->state == SLEEPING) cprintf("%s\t\t %d  \t SLEEPING \t %d  \t\t %d \t\t %d      \t%d \t \n",p->name,p->pid,p->nice,p->runtime/p->weight,p->runtime,p->vruntime);
@@ -642,24 +605,40 @@ ps(void)
 int 
 setnice(int pid,int nice_val)
 {
+	//exec only not acquire(&ptable);
 	struct proc* p;
+	int total_weight=0;
+  	int write=0;
 	if(nice_val>=-5 && nice_val <=5){
-  		acquire(&ptable.lock);
-  		for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-    		if(p->pid == pid){
+		// cal total weight of runnable process & nice,weight
+		acquire(&ptable.lock);
+		for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+			// set nice weigt
+			if(p->pid == pid) {	
 				p->nice = nice_val;
 				p->weight = weight_val[nice_val+5];
-    			release(&ptable.lock);
-				return 0;
+				write=1;
 			}
-  		}
+			// cal total weight
+			if(p->state != RUNNABLE) continue;
+			else {
+				total_weight += p->weight;
+			}
+		}
   		release(&ptable.lock);
+		//total_weight == 0 when start xv6 & start process
+		//cprintf("NO RUNNABLE process : total_weight : 0\n");
+		if(total_weight != 0) {
+  			acquire(&ptable.lock);
+  			// cal time_slice
+			for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+   		 		p->time_slice = 10000*(p->weight/total_weight); // 10tick(*1000 mili tick) x weigth / total_weight 
+  			}
+  			release(&ptable.lock);
+		}
 	}
-/*
-	cprintf("myproc pid : %d, set_pid : %d\n", myproc()->pid,pid); 
-	cprintf("process val :%d,nice_val: %d - wrong value\n",myproc()->nice,nice_val);
-*/
-	return -1; // fail
+	if(write == 1) return 0;
+	else return -1; // fail
 }
 int 
 getnice(int pid)
@@ -673,7 +652,7 @@ getnice(int pid)
 			val = p->nice;
 			release(&ptable.lock);
 			if(val >=-5 && val<=5) return val;	
-    		else return -10;
+    		else return -10; // default : -1 since nice : -5~5, should be change
 		}
   	}
   	release(&ptable.lock);
