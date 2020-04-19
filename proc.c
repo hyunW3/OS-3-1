@@ -10,6 +10,7 @@
 struct ptable{
   struct spinlock lock;
   struct proc proc[NPROC];
+  int total_weight;
 } ptable;
 
 static struct proc *initproc;
@@ -641,7 +642,7 @@ setnice(int pid,int nice_val)
 		// cal total weight of runnable process & nice,weight
 		acquire(&ptable.lock);
 		for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-			// set nice weigt
+			// set nice weight
 			if(p->pid == pid) {	
 				p->nice = nice_val;
 				p->weight = weight_val[nice_val+5];
@@ -654,9 +655,10 @@ setnice(int pid,int nice_val)
 				total_weight += p->weight;
 			}
 		}
+        ptable.total_weight = total_weight;
   		release(&ptable.lock);
 		//total_weight == 0 when start xv6 & start process
-		//cprintf("NO RUNNABLE process : total_weight : 0\n");
+//		cprintf("process's total_weight : %d\n\n",ptable.total_weight);
 		if(total_weight != 0) {
 //			cprintf("total_weight : %d\n",total_weight);
   			acquire(&ptable.lock);

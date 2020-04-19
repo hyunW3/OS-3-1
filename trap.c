@@ -11,6 +11,7 @@
 extern struct ptable{
   struct spinlock lock;
   struct proc proc[NPROC];
+  int total_weight;
 } ptable;
 
 void runtime_overflow_handle(){
@@ -146,8 +147,11 @@ trap(struct trapframe *tf)
 
 		}else {
 			// time_slice to be reset
-			setnice(myproc()->pid,myproc()->nice); // should be change to set_time_slice
-		//	ps();
+			//setnice(myproc()->pid,myproc()->nice); // should be change to set_time_slicei
+			acquire(&ptable.lock);
+			myproc()->time_slice = (10000*myproc()->weight/ptable.total_weight); // 10tick(*1000 mili tick) x weigth / total_weight 
+			release(&ptable.lock);
+//			ps();
 			yield();
 		}
 	}	
