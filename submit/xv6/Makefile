@@ -183,6 +183,7 @@ UPROGS=\
 	_wc\
 	_test1\
 	_test2\
+	_testcfs\
 	_zombie\
 	_ps\
 	_swaptest\

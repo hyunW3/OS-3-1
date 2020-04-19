@@ -9,7 +9,6 @@ struct spinlock;
 struct sleeplock;
 struct stat;
 struct superblock;
-//struct ptable; // add
 
 // bio.c
 void            binit(void);

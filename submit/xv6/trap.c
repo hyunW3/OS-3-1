@@ -7,7 +7,25 @@
 #include "x86.h"
 #include "traps.h"
 #include "spinlock.h"
+// it is sharing data with ptable in proc.c? -> yes
+extern struct ptable{
+  struct spinlock lock;
+  struct proc proc[NPROC];
+} ptable;
 
+void runtime_overflow_handle(){
+  	struct proc *p;
+	acquire(&ptable.lock);
+	for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+		//cprintf("pid :%d, state:%s\n",p->pid,p->state);
+//		p->runtime /= 1000;
+		p->runtime = (p->runtime >> 10);
+		p->vruntime = (p->vruntime >>10); // p->vruntime /= 1000;
+		p->start_time = (p->start_time >>10); // ;p->start_time /= 1000;;
+		//if(p->pid != 0) cprintf("pid :%d -> %d %d %d\n",p->pid,p->runtime,p->vruntime,p->start_time);
+	}
+	release(&ptable.lock);
+};
 // Interrupt descriptor table (shared by all CPUs).
 struct gatedesc idt[256];
 extern uint vectors[];  // in vectors.S: array of 256 entry pointers
@@ -46,7 +64,7 @@ trap(struct trapframe *tf)
   }
 
   switch(tf->trapno){
-  case T_IRQ0 + IRQ_TIMER:
+  case T_IRQ0 + IRQ_TIMER: // timer interrupt
     if(cpuid() == 0){
       acquire(&tickslock);
       ticks++;
@@ -108,14 +126,30 @@ trap(struct trapframe *tf)
   // when timer interrupt occurs, runtime of certain process increases.
 	if(myproc() && myproc()->state == RUNNING &&
      tf->trapno == T_IRQ0+IRQ_TIMER)
-    //yield();
-  	myproc()->runtime = myproc()->runtime+1;
-	
-  /*
-	if(myproc() && myproc()->state == RUNNING) {
-		myproc()->runtime = myproc()->runtime+1;
-  	}
-  */
+    {
+		//int inc = 10000000;
+		int inc = 1000;
+		if((myproc()->runtime+inc) <0 || (myproc()->vruntime+inc) <0){ //overflow handling
+			if((myproc()->runtime+inc) <0)	myproc()->runtime = MAX_INT;
+			if((myproc()->vruntime+inc) <0)	myproc()->vruntime = MAX_INT;
+			runtime_overflow_handle();
+		}else {
+			myproc()->runtime +=inc;
+    		myproc()->vruntime += (int)inc*1024/(myproc()->weight); 
+		}
+		// yield or not
+		if(myproc()->time_slice >0){
+			//myproc()->time_slice -=1000;
+			myproc()->time_slice -=inc;
+
+		}else {
+			// time_slice to be reset
+			setnice(myproc()->pid,myproc()->nice); // should be change to set_time_slice
+		//	ps();
+			yield();
+		}
+	}	
+  
 	// Check if the process has been killed since we yielded
   if(myproc() && myproc()->killed && (tf->cs&3) == DPL_USER)
     exit();

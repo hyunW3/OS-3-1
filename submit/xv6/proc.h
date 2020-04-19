@@ -30,7 +30,6 @@ struct context {
   uint ebp;
   uint eip;
 };
-
 enum procstate { UNUSED, EMBRYO, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
 
 // Per-process state
@@ -50,9 +49,12 @@ struct proc {
   char name[16];               // Process name (debugging)
 // add
   int nice;				   //priority by nice value (0~10)	
+  int weight;				// nice to weight, to calculate vruntime
   int runtime;				//time duration that process hold
+  int vruntime;				// to apply cfs scheduler, assign by runtime & nice_val
+  int start_time;			// to calculate (delta)runtime
+  int time_slice;			// init :10, decrease with each 10ms(10ticks)
 };
-
 // Process memory is laid out contiguously, low addresses first:
 //   text
 //   original data and bss

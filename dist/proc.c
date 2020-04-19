@@ -484,7 +484,7 @@ wakeup1(void *chan)
 
   // find min_vruntime in runnable process
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
-	if(p->state == RUNNABLE){
+	if(p->state == RUNNABLE || p->state == RUNNING){
 		if(min_vruntime == -1){
 			min_vruntime = p->vruntime;	
 		}else { // if
